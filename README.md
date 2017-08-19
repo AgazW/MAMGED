@@ -1,5 +1,5 @@
 # MAMGED (Meta-analyis for Microarray Gene Expression Data)
-**MAMGED** Is a tool written in R to perform meta-analysis  of  microarray  gene  expression  data  to
+[MAMGED](http://mamged.ibab.ac.in/ "mamged online and offline version") Is a tool written in R to perform meta-analysis  of  microarray  gene  expression  data  to
 1. Quantify  absolute  expression  calls.
 2. Quantify differential expression calls. 
 
