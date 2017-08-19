@@ -1,2 +1,2 @@
-# MAMGED
-The link will be updated soon.....
+# MAMGED (Meta-analyis for Microarray Gene Expression Data)
+
