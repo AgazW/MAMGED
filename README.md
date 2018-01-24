@@ -94,7 +94,12 @@ The sample data can be downloaded directly for the [MAMGED](http://mamged.ibab.a
 
 ## RUNNING OF MAMGED
 
-Once you are done with all the installation and loading process, put the tool folder in the current working directory. The working directory can also be set at the top of the `Rstudio session -> Set Working Directory -> Choose Directory`. After setting the path, check the current working  directory  by `getwd()` to  make  sure  that  correct  working  directory  is  set.  To  run  the program enter `runApp('applicationname)` i.e. the name of tool folder into R, open in browser and work. 
+#### Online Version
+For online usage, the users don't need to install R and Rstudio on local computer. The user can directly access the MAMGED tool for meta-analysis. Once a job is submited, the user will be provided with a job id for future reference. The user will be intimated via emial about finishing of the job or any issue in the submited job. If the job is successfully processed, the results can be dowloaded by providing the job id.
+
+#### Offline Version
+
+To access MAMGED offline, the user needs to download the MAMGED package from the [MAMGED](http://mamged.ibab.ac.in) and install R and Rstudio. All other dependency R packages mentioned above need to be installed. Once all the packages are installed, the user needs to load the `shiny` R package by typing `library(shiny)` into the `Rstudio` console before running the tool. All the other packages will be automatically loaded once the application starts. Now as a final step to run the tool offline, tool folder needs to be put in the current working directory. The working directory can also be set at the top of the `Rstudio session -> Set Working Directory -> Choose Directory`. After setting the directory (path), check the current working  directory  by `getwd()` to  make  sure  that  correct  working  directory  is  set.  To  run  the program enter `runApp('applicationname)` i.e. the name of tool folder into R, open in browser and work.  In this version no job id is provided and user will be able to see and download the results once the analysis is finished. 
 
 Note: Replace `applicationname` with the actual application name.
 If  shiny  package  is  not  installed  and  an  attempt  is  made  to  run  the  application  by runApp('name  of  your  application’),  R  will  throw an error.
@@ -114,4 +119,3 @@ For more help, reference manual is available under "Help" section of the [MAMGED
 Send additional enquiries to mamged@ibab.ac.in
 _____________________________________________________________________________________________________________________________
 
-##### If you are having any issue with the online/offline version of the tool, please feel free to contact agazhussain@mangaloreuniversity.ac.in
