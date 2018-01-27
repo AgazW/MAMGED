@@ -10,7 +10,7 @@ Three types of analysis can be performed for meta-analysis of absolute expressio
 
 ## Data that can be anayzed
 
-The current version of this tool is able to handle microarray gene expression raw/processed data from three different platforms:
+The current version of the MAMGED is able to handle microarray gene expression raw/processed data from three different platforms:
 
 #### 1. Affymetrix 
 * HC_G110 Affymetrix Human Cancer Array (GPL 74)
