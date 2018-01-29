@@ -10,68 +10,7 @@
 cat("\014")
 
 
-# Packages requried
-#library(shinyjs)
-#library(simpleaffy)
-#library(affy)
-#library(shiny)
-#library(markdown)
-#library(plyr)
-#library(data.table)
-#library(dplyr)
-#library(codelink)
-#library(lumi)
-#library(h20kcod.db)
-#library(h10kcod.db)
-#library(hwgcod.db)
-#library(limma)
-#library(tibble)
-#library(dtplyr)
-#library(DBI)
-#library(RMySQL)
 
-
-#library(gcrma)
-#library(hgu133a.db)
-#library(hgu133acdf)
-#library(hgu133plus2.db)
-#library(hgu133plus2cdf)
-#library(hgu133a2frmavecs)
-#library(hgu133b.db)
-#library(hgu133bcdf)
-#library(hgu219.db)
-#library(hgu219cdf)
-#library(hgu95a.db)
-#library(hgu95acdf)
-#library(org.Hs.eg.db)
-#library(hgu133a2.db)
-#library(hgu133a2cdf)
-#library(hgu95av2.db)
-#library(hgu95av2cdf)
-#library(hgu133plus2cdf)
-#library(affyPLM)
-##library(makecdfenv)
-#library(parallel)
-#library(base)
-#library(S4Vectors)
-#library(IRanges)
-#library(stats4)
-#library(BiocInstaller)
-#library(Biobase)
-#library(BiocGenerics)
-#library(BiocParallel)
-#library(biomaRt)
-#library(Biostrings)
-#library(preprocessCore)
-#library(affyio)
-#library(zlibbioc)
-#library(graphics)
-#library(grDevices)
-#library(methods)
-#library(genefilter)
-#library(stats)
-#library(AnnotationDbi)
-#library(utils)
 
 
 ## Defining the size of file to be accepted. Here it can accept any size.
@@ -136,19 +75,20 @@ affymetrix_proc_data <- function(df, files, df1, affy_range){
                              df1))
   for(i in 1:length(affy_combined)){
     incProgress(0.1, detail = paste("File", i)) 
+    
     # cat("Annotation done...",i,"\n")
     dataAnot <- na.omit(affy_combined[[i]][, -c(1,2)])
-    # dataAnot <- dataAnot[, -c(1,2)]
+   
     pvalue <- grepl("PVALUE", colnames(dataAnot))
+    
     if(any(pvalue)){
       dt <- data.table(dataAnot)
       setkey(dt, PVALUE) ; indx <- dt[,.I[1L], by = SYMBOL]$V1 
       dataWoDuplic <- dt[indx]
     }else{
-      # cat("Trying to remove the duplicates\n")
+      cat("Removing the duplicates...\n")
       dataWoDuplic <- setDT(dataAnot)[order(factor(CALL, levels=c('P', 'A', 'M'))),
                                       .SD[1L], by = SYMBOL]
-      #print(head(dataWoDuplic, 20))
     }
     affydata[[length(affydata)+1]] <- dataWoDuplic
   }
@@ -161,7 +101,6 @@ affymetrix_proc_data <- function(df, files, df1, affy_range){
 
 ###############################  End  ############################################## 
 
-# New affymetrix raw data function #***********************************#
 
 ## Function to process Affymetrix raw  data.
 processed <- list()
@@ -181,11 +120,10 @@ affy_processed_data <- function(genAffyData){
     for(j in 1: affyfiles) {
       incProgress(0.1, detail = paste("Batch",i,"File", j, ":",length(processed)))
       cat("Length:", length(genAffyData[[i]]), "\n")
-      # print(!grepl("hugene.1.0.st.v1",genAffyData@annotation))
-      # print(!grepl("hugene10stv1",genAffyData@annotation))
+
       if(grepl("hugene.1.0.st.v1",genAffyData[[i]]@annotation) || grepl("hugene10stv1",
                                                                         genAffyData[[i]]@annotation)){
-        print("data from huge 10 st array")
+        cat("data from huge 10 st array\n")
         eset <- rma(genAffyData[[i]][, j])
         expr = as.data.frame(exprs(eset))
         # print(head(expr))
@@ -204,8 +142,10 @@ affy_processed_data <- function(genAffyData){
       }
       else{
         eset.mas5 = mas5(genAffyData[[i]][, j])
+        
         ## getting the expression matrix (probesets/genes in rows, chips in columns).
         exprSet.nologs = exprs(eset.mas5)
+        
         # print(head(exprSet.nologs))
         ## At this time let's log-transform the expression values to get a more normal distribution. 
         ## We have to remember we've done this when we calculate ratios. Logarithms can use any
@@ -237,71 +177,6 @@ affy_processed_data <- function(genAffyData){
 
 ####################################  End  ###############################################
 
-
-
-## Function to process Affymetrix raw  data.
-processed <- list()
-processed_data <- function(genAffyData){
-  if(grepl("hugene.1.0.st.v1",genAffyData@annotation) | grepl("hugene10stv1",genAffyData@annotation))
-    affyfiles = length(genAffyData@protocolData@data$exprs)
-  else
-    affyfiles = length(genAffyData)
-  if(affyfiles<2){
-    stop("Less than two files provided, please select 2 or more files to perform
-         meta-analysis")
-  }
-  for(i in 1: affyfiles) {
-    incProgress(0.1, detail = paste("File", i))
-    cat("Length:", length(genAffyData), "\n")
-    # print(!grepl("hugene.1.0.st.v1",genAffyData@annotation))
-    # print(!grepl("hugene10stv1",genAffyData@annotation))
-    if(grepl("hugene.1.0.st.v1",genAffyData@annotation) || grepl("hugene10stv1",genAffyData@annotation)){
-      print("data from huge 10 st array")
-      eset <- rma(genAffyData[, i])
-      expr = as.data.frame(exprs(eset))
-      # print(head(expr))
-      expr = rownames_to_column(expr)
-      colnames(expr) = c("ID","INTENSITY")
-      expcalls = as.data.frame(paCalls(genAffyData[,i], "PSDABG"))
-      expcalls = rownames_to_column(expcalls)
-      colnames(expcalls) = c("ID", "PVALUE")
-      # print(head(expcalls))
-      data.full = merge(expr, expcalls, by.x = "ID", all.x = T)
-      processed[[length(processed)+1]] <- data.full
-    }
-    else{
-      eset.mas5 = mas5(genAffyData[, i])
-      ## getting the expression matrix (probesets/genes in rows, chips in columns).
-      exprSet.nologs = exprs(eset.mas5)
-      # print(head(exprSet.nologs))
-      ## At this time let's log-transform the expression values to get a more normal distribution. 
-      ## We have to remember we've done this when we calculate ratios. Logarithms can use any
-      ## base, but base 2 is easiest when transforming ratios, since transformed 2-fold
-      ## ratios up or down will be +1 or -1. As a result, we'll do all logs with base
-      ## 2 to keep thing simplest.
-      
-      ## While we're doing Affymetrix-specific preprocessing, let's calculate
-      ##an Absent/Present call for each probeset.
-      # Run the Affy A/P call algorithm on the CEL files we processed above
-      
-      data.mas5calls = mas5calls(genAffyData[, i])
-      data.mas5calls.calls = exprs(data.mas5calls)
-      # print(head(data.mas5calls.calls))
-      pvalue <- assayData(data.mas5calls)[["se.exprs"]]
-      # print(head(pvalue))
-      data.full <- cbind(exprSet.nologs, data.mas5calls.calls, pvalue)
-      data.processed <- data.frame(data.full)
-      #data.processed <- add_rownames(data.processed, "VALUE")
-      data.processed <- rownames_to_column(data.processed, var = "VALUE")
-      setnames(data.processed,c("ID","INTENSITY","CALL","PVALUE")) 
-      processed[[length(processed)+1]] <- data.processed
-      # cat("Affymetrix processing done...\n")
-    }
-  }
-  return(processed)
-  }
-
-####################################  End  ###############################################
 
 
 ## Function for raw codelink data
@@ -343,6 +218,7 @@ codelink_data <- function(codelinkpath){
   }
 
 
+
 ## Function for codelink processed data.
 codelinkdata <- list()
 
@@ -369,8 +245,7 @@ codelink <- function(df, files, df1, codelink_range){
   
   ## this option is disapled here because some files are not valid 
   ## the invalid files are skiped if any
-  #if(sum(vec) != length(df)) 
-  #stop("length of range is not equal to length of input files")
+
   
   codelink_combined <- do.call(c, 
                                Map(function(x,y) lapply(x, function(dat) 
@@ -384,7 +259,6 @@ codelink <- function(df, files, df1, codelink_range){
     
     dataAnot <- na.omit(codelink_combined[[i]][, -c(1, 2)])
     
-    #dataAnot <- dataAnot[, -c(1, 2)]    
     #print(head(dataAnot),10)
     
     dataAnot[with(dataAnot, order(SNR, decreasing = TRUE)),]
@@ -420,6 +294,7 @@ codelink <- function(df, files, df1, codelink_range){
 ######################################  End  ######################################
 
 
+
 # Differential Expression, validates the annotation files selected for annotation and the range input
 affy_diff_expr_range_vald <- function(in_files, annotations, affy_diff_range){
   target_files <- which(grepl("*.txt$", in_files))
@@ -429,9 +304,8 @@ affy_diff_expr_range_vald <- function(in_files, annotations, affy_diff_range){
     vec <- length(target_files)
   }
   
-  message("checking vec and annotation len")
-  print(length(vec))
-  print(length(annotations))
+  cat("checking vec and annotation len\n")
+ 
   # Through an error if length of range is greater than the
   # length of annotation files.
   if(length(vec) > length(annotations)) 
@@ -482,7 +356,7 @@ fold_change_affy <- function(fileList, newpath, df1, fold, pval, newnames, condi
       combination <- grep('(.*)-\\1',unique(as.vector(outer(unique, 
                                                             unique, FUN = paste,
                                                             sep = '-'))), value = TRUE, invert = TRUE)
-      print(combination)
+
       # cat("possible combination:\n")
       conditions <- gsub(" ","", conditions[[1]])
       if(!all(conditions[[1]]%in%combination)){
@@ -505,19 +379,18 @@ fold_change_affy <- function(fileList, newpath, df1, fold, pval, newnames, condi
             # foldPval <- add_rownames(foldPval)
             foldPval <- rownames_to_column(foldPval)
             names(foldPval)[1] <- "ID"
-            #setnames(foldPval,c("ID", "AlogFC", "AveExpr", "PVALUE"))
           }
           else{
             foldPval <- top[, c(1, 2, 4, (which(AdditionalInfo[1] == TRUE)+2),
                                 which(AdditionalInfo[2] == TRUE)+4,
                                 which(AdditionalInfo[3]==TRUE)+5)]
+            
             cat("checking the extracted columns\n")
-            # foldPval <- add_rownames(foldPval)
             foldPval <- rownames_to_column(foldPval)
             names(foldPval)[1] <- "ID"
           }
           
-          cat("testing differential expressin .........\n")
+          cat("testing differential expressin...\n")
           foldchange[[length(foldchange)+1]] <- foldPval
         }
       }
@@ -542,21 +415,7 @@ affy_combined_fc <- function(in_files, df, df1, affy_diff_range){
   }else{
     vec <- length(target_files)
   }
-  # 
-  # # Through an error if length of range is greater than the
-  # # length of annotation files.
-  # if(length(vec) > length(df1)) 
-  #   stop("Range argument not a multiple of length of annotation")
-  # else if(length(vec) < length(df1))
-  #   stop("Length of range is not equal to length of annotation ")
-  # 
-  # if(any(vec == 0))
-  #   stop("Range element can not be zero")
-  # 
-  # # The length should be equal to target files
-  # if(sum(vec) != length(target_files))
-  #   stop("length of range is not equal to length of input files")
-  # 
+ 
   affy_fc_annotated <- do.call(c, 
                                Map(function(x,y) lapply(x, function(dat) 
                                  merge(y, dat, by = c("ID"), all.y = TRUE)), 
@@ -566,7 +425,7 @@ affy_combined_fc <- function(in_files, df, df1, affy_diff_range){
   for(i in 1:length(affy_fc_annotated))
   {
     incProgress(0.1, detail = paste("File", i))
-    cat("Testing affymetrix diff expr ......\n")
+    cat("Testing affymetrix diff expr...\n")
     afterAnot <- na.omit(affy_fc_annotated[[i]][, -c(1,2)])
     dt <- data.table(afterAnot)
     setkey(dt, PVALUE) ; indx <- dt[,.I[1L], by = SYMBOL]$V1 
@@ -588,7 +447,7 @@ codelinkdiff <- function(fileList, newpath, cntrsts, pval, fc, annotation, newna
                          AdditionalInfo, FDRMethod){
   ext <- grepl("*.txt$", fileList)
   
-  # Removing extra space to avoid error in contrasts.............. 
+  # Removing extra space to avoid error in contrasts.
   cntrsts <- gsub(" ","", cntrsts[[1]])
   if(length(fileList) < 1){
     stop("Please select at least one study with two
@@ -643,6 +502,7 @@ codelinkdiff <- function(fileList, newpath, cntrsts, pval, fc, annotation, newna
         if(nrow(top) > 0)
         {
           top <- top[,c("probeName","meanSNR", "logFC", "AveExpr", "t", "P.Value" ,"adj.P.Val", "B")]
+          
           if(all(AdditionalInfo == FALSE)){
             foldPval <- top[, c("probeName", "logFC", "AveExpr", "P.Value")]
             setnames(foldPval, c("PROBEID", "ClogFC", "AveExpr", "PVALUE"))
@@ -656,6 +516,7 @@ codelinkdiff <- function(fileList, newpath, cntrsts, pval, fc, annotation, newna
                                 (which(AdditionalInfo[3]==TRUE)+6),
                                 (which(AdditionalInfo[4] == TRUE)+7))]
           }
+          
           ## Extracting information from ids to have a match with accnum 
           ids <- foldPval$PROBEID
           test <- grepl("_", ids[1])
@@ -714,6 +575,7 @@ codelinkdiff <- function(fileList, newpath, cntrsts, pval, fc, annotation, newna
   return(coddiff)
   }
 
+
 # Linked to codelink diff expression (Above code).
 codlinkdiff1 <- function(df){
   codfinal <- lapply(seq_along(df), function(i) setnames(df[[i]],
@@ -724,6 +586,7 @@ codlinkdiff1 <- function(df){
   codfinal
 }
 ############################## End ###################################
+
 
 
 ## Function for illumina processed data to perform meta-analysis
@@ -762,6 +625,7 @@ illumina_proc <- function(df, files, df1, illumina_range){
   
   
   for(i in 1:length(illumina_combined)) {
+    
     # cat("Illumina in annotation section:\n")
     incProgress(0.1, detail = paste("File", i))
     dataAnot <- na.omit(illumina_combined[[i]][, -c(1, 2)])
@@ -780,6 +644,7 @@ illumina_proc <- function(df, files, df1, illumina_range){
 ########################### End ################################################
 
 
+
 ## Function to process Illumina raw data
 ilm <- list()
 illuminaRaw <- function(illumina){
@@ -796,16 +661,13 @@ illuminaRaw <- function(illumina){
     {
       lumidata <- cbind(exprs, pvalue)
       data.processed <- data.frame(lumidata)
-      # data.processed <- add_rownames(data.processed, "VALUE")
       data.processed <- rownames_to_column(data.processed, "VALUE")
       colnames(data.processed) <- c("ID", "INTENSITY", "PVALUE")
       ilm[[length(ilm) + 1]] <- data.processed
     }else{
       exprs <- data.frame(exprs)
       pvalue <- data.frame(pvalue)
-      # exprs <- add_rownames(exprs, "ID")
       exprs <- rownames_to_column(exprs, "ID")
-      # pvalue <- add_rownames(pvalue, "ID")
       pvalue <- rownames_to_column(pvalue, "ID")
       names(exprs)[2:ncol(exprs)] <- paste("INTENSITY", 1:ncol(exprs), sep = "")
       names(pvalue)[2:ncol(pvalue)] <- paste("PVALUE", 1:ncol(pvalue), sep = "")
@@ -824,6 +686,7 @@ illuminaRaw <- function(illumina){
   return(ilm)
 }
 ################################# End ######################################
+
 
 
 ## Function for differential expression of illumina data
@@ -866,7 +729,7 @@ illumina_diff_expr <- function(ilmNames, ilmTargets, x, fc, pval, newnames,
     selDataMatrix <- dataMatrix[presentCount > 0,]
     probeList <- rownames(selDataMatrix)
     design <- model.matrix(~0 + f)
-    colnames(design) <- unique ## c("C","TT","D","DT")
+    colnames(design) <- unique 
     fit <- lmFit(selDataMatrix, design)
     cat("fitting the model done...\n")
     contrast.matrix <- makeContrasts(contrasts = x[[1]], levels = design)
@@ -878,7 +741,7 @@ illumina_diff_expr <- function(ilmNames, ilmTargets, x, fc, pval, newnames,
     {
       top <- topTable(fit2, coef = i, n = Inf,
                       p.value = pval, lfc = fc, adjust.method = FDRMethod)
-      #top <- topTable(fit2, coef=i,number=geneNum, adjust.method="BH")
+      
       if(nrow(top) > 0)
       {
         setnames(top, c("IlogFC", "AveExpr", "t-statistic", "PVALUE", "AdjustedP-val",
@@ -888,14 +751,12 @@ illumina_diff_expr <- function(ilmNames, ilmTargets, x, fc, pval, newnames,
           # foldPval <- add_rownames(foldPval)
           foldPval <- rownames_to_column(foldPval)
           names(foldPval)[1] <-"ID"
-          #setnames(foldPval,c("ID", "IlogFC", "AvgExpr", "PVALUE"))
         }
         else{
           foldPval <- top[, c(1, 2, 4, (which(AdditionalInfo[1] == TRUE)+2),
                               which(AdditionalInfo[2] == TRUE)+4,
                               which(AdditionalInfo[3]==TRUE)+5)]
           cat("checking the extracted columns\n")
-          # foldPval <- add_rownames(foldPval)
           foldPval <- rownames_to_column(foldPval)
           names(foldPval)[1] <- "ID"
         }
@@ -965,6 +826,7 @@ Illumina_combined_fc <- function(in_files, df, df1, illumina_diff_range){
 ########################################## End ########################################
 
 
+
 ## Illumina function to split the list of files as Names and Targets
 names <- list()
 targets <- list()
@@ -1020,41 +882,12 @@ order_codelink_proc_data <- function(df){
 ############################### END ########################################
 
 
+
 ## Function for Affymetrix data to reorder(Automatic Detection of data platform)
 fun2 <- function(data){
   if(ncol(data) > 4){
     stop("Data is not of correct formate, please check the files and try again")
   }
- #  
- # # cat("====================================================================== \n")
- # #  print(head(data))
- # #  if((any(grepl("*_at", data[1:10,1])) & any(data[1:10,2] >1) & 
- # #      any((data[1:10,3]) =='P' | any(data[1:10,3]) == 'A' |
- # #          any(data[11:10,3]) =='M') & any(data[1:10,4]) <=1 )
- # #     | any((grepl("*_at", data[1:10,1])) & 
- # #           any((data[1:10,2]) =='P' | 
- # #               any(data[1:10,2]) == 'A' |
- # #               any(data[1:10,2]) =='M' & 
- # #               any(data[1:10,3]) <=1)) 
- # #     | any((grepl("*_at", data[1:10,1])) & any(data[1:10,2]) >1 &
- # #           any((data[1:10,3]) =='P' | any(data[1:10,3]) == 'A' | any(data[1:10,3]) =='M'))
- # #     | any((grepl("*_at", data[1:10,1]) & any(data[1:10,2]) <=1 ))){
- # #    cat("====================================================================== again \n")
- # #    if(ncol(data) == 4)
- # #      setnames(data,c("ID", "INTENSITY", "CALL", "PVALUE"))
- # #    else if(ncol(data) == 3 && all(data[2:100,3] <= 1))
- # #      setnames(data,c("ID", "INTENSITY", "PVALUE"))
- # #    else if(ncol(data) == 3 && any(data[2:100,3] == 'P'))
- # #      setnames(data,c("ID", "INTENSITY", "CALL"))
- # #    else if(ncol(data) == 2 && is.numeric(data[,2])){
- # #      if(all(data[2:100,2] <= 1))
- # #        setnames(data, c("ID", "PVALUE"))
- # #      }
- # #    else if(ncol(data) == 2 && any(data[1:100,2] == 'P'))
- # #      setnames(data, c("ID", "CALL"))
- # #    print(head(data))
- # #    d= data
- # #  }
   
   if(!any(grepl("*_at", data[1:10,]))){
     if((any(data[1:10,1] >7000000) & any(data[1:10,2] >1) &
@@ -1129,6 +962,7 @@ fun2 <- function(data){
 ##################################### END #######################################
 
 
+
 ## Function to order illumina data
 ilmnOrder <- function(data){
   dim(data)
@@ -1162,6 +996,7 @@ ilmnOrder <- function(data){
 #################################### End ##############################
 
 
+
 ## Function to read the processed data to store into a list
 ready_data <- list()
 proc_data <- function(path, leng){
@@ -1176,48 +1011,18 @@ proc_data <- function(path, leng){
 ############################# End ######################################
 
 
+
 shinyServer(function(input, output,session) {
-  
-  
-  # output$alltabs <- renderUI({
-  #   if(input$radio == 2 && input$checkbox){
-  #     tabsetPanel(id = "MamgedTabs",
-  #                 tabPanel("Source-data", dataTableOutput("sourced")),
-  #                 tabPanel("Summary",dataTableOutput("final")),
-  #                 tabPanel("Supplementary file", dataTableOutput("full"))
-  #     )
-  #   }
-  #   else{
-  #     tabsetPanel(id = "MamgedTabs",
-  #                 tabPanel("Source-data", dataTableOutput("sourced")),
-  #                 tabPanel("Annotation-data",dataTableOutput("annotation")),
-  #                 tabPanel("Summary",dataTableOutput("final")),
-  #                 tabPanel("Supplementary file", dataTableOutput("full"))
-  #     )
-  #   }
-  # })
   
   
   filenames <- list.files(path = "data", pattern="\\.txt$")
   names(filenames) <- gsub(pattern = "\\.txt$", "", filenames)
   
-  ## Dropdown box for chosing and loading annotation file
-  # output$AnnotationFile = renderUI({
-  #   cat("checkbox ", input$checkbox, "\n")
-  #   cat("input$radio ", input$radio, "\n")
-  #   if(!input$checkbox | (input$checkbox == T && input$radio != 2)){ ##!input$checkbox | (input$checkbox == T && input$radio != 2
-  #     wellPanel(
-  #       h5("Upload Annotation File"),
-  #       selectInput('dataset', "Choose platform annotation file",
-  #                   c("Please select a file" = '', filenames), multiple = TRUE))
-  #     }
-  #   })
-  
   
   
   # range input option
   output$annotation_range = renderUI({
-    if(length(input$dataset) > 1){
+    if(length(input$dataset) > 1 & (input$radio == 1 | (input$radio == 2 & !input$checkbox) | input$radio == 3 )){
       wellPanel(
         textInput("Range", label = "Range")
       )
@@ -1294,106 +1099,6 @@ shinyServer(function(input, output,session) {
   
   
   
-  ## Display Differential Expression Parameters *******************************
-  # output$hide=renderUI({ 
-  #   if(input$checkbox == T && input$radio == 1){
-  #     wellPanel(
-  #       h5("Affymetrix Differential Expression"),
-  #       list(numericInput("num", label = h5("Fold Change"),
-  #                         value = NULL, min = 0.5, max = 5, step = 0.5),
-  #            numericInput("num1", label = h5("P-Value"),
-  #                         value = NULL, min = 0.01, max = 0.05, step = 0.01),
-  #            textInput("text", label = h5("Make Contrasts"),
-  #                      value = "Prostate-Normal")))
-  #     }else if(input$checkbox == T && input$radio == 2){
-  #       wellPanel(
-  #         h5("Codelink Differential Expression"),
-  #         list(
-  #           textInput("text1", label = h5("Make Contrasts"), 
-  #                     value = "spermatogenesis2-spermatogenesis5"),
-  #           selectizeInput("select", label = h5("Choose Annotation"),
-  #                          choices = list("h10kcod.db" = "h10kcod",
-  #                                         "h20kcod.db" = "h20kcod",
-  #                                         "hwgcod.db" = "hwgcod"),
-  #                          options = list(placeholder = 'Choose DB',
-  #                                       onInitialize = I('function()
-  #                                                        { this.setValue(""); }'))),
-  #           numericInput("num3", label = h5("Fold Change"),
-  #                        value = NULL, min = 0.5, max = 5, step = 0.5),
-  #           numericInput("num4", label = h5("P-Value"),
-  #                        value = NULL, min = 0.01, max = 0.05, step = 0.01)))
-  #       }else if (input$checkbox == T && input$radio == 3){
-  #         wellPanel(
-  #           h5("Illumina Differential Expression"),
-  #           list(
-  #             textInput("text3", label = h5("Make Contrasts"), value = "Enter conditions.."),
-  #             numericInput("num5", label = h5("Fold Change"),
-  #                          value = NULL, min = 0.5, max = 5, step = 0.5),
-  #             numericInput("num6", label = h5("P-Value"),
-  #                          value = NULL, min = 0.01, max = 0.05, step = 0.01)))
-  #         }
-  #   })
-  # 
-  
-  
-  # ## Display options for additional information for affymetrix data ***********
-  # output$FDRAffymetrix <- renderUI({
-  #   if(input$checkbox == T && (input$radio == 1 | input$radio == 3)){
-  #     wellPanel(
-  #       h5("Additional information you want in supplementary file"),
-  #       list(
-  #         checkboxInput("checkbox1", label = "t-statistic", value = FALSE),
-  #         checkboxInput("checkbox2", label = "adjusted p-value", value = FALSE),
-  #         checkboxInput("checkbox3", label = "B-statistic", value = FALSE),
-  #         actionButton("selectAll", label = "Select All"),
-  #         actionButton("deselectAll", label = "Deselect All"),
-  #         br(),
-  #         br(),
-  #         #checkboxInput("checkbox4", label = "All", value = FALSE),
-  #         radioButtons("radio1", label = h5("Choose False Discovery Control"),
-  #                      choices = list("Benjamini & Hochberg (BH)" = "BH",
-  #                                     "Benjamini & Yekutieli (BY)" = "BY",
-  #                                     "holm" = "holm",
-  #                                     "hochberg" = "hochberg",
-  #                                     "hommel" = "hommel",
-  #                                     "bonferroni" = "bonferroni",
-  #                                     "fdr" = "fdr",
-  #                                     "none" = "none"),
-  #                      selected = NULL)))
-  #     }
-  #   })
-  
-  
-  
-  ## Display options for additional information for codelink data *************
-  # output$FDRCodlink <- renderUI({
-  #   if(input$checkbox == T && input$radio == 2){
-  #     wellPanel(
-  #       h5("Additional information you want in supplementary file"),
-  #       list(
-  #         checkboxInput("checkbox4", label = "meanSNR", value= FALSE),
-  #         checkboxInput("checkbox5", label = "t-statistic", value = FALSE),
-  #         checkboxInput("checkbox6", label = "adjusted p-value", value = FALSE),
-  #         checkboxInput("checkbox7", label = "B-statistic", value = FALSE),
-  #         actionButton("selectAll1", label = "Select All"),
-  #         actionButton("deselectAll1", label = "Deselect All"),
-  #         br(),
-  #         br(),
-  #         #checkboxInput("checkbox5", label = "All", value = FALSE),
-  #         radioButtons("radio1", label = h5("Choose False Discovery Control"),
-  #                      choices = list("Benjamini & Hochberg (BH)" = "BH",
-  #                                     "Benjamini & Yekutieli (BY)" = "BY",
-  #                                     "holm" = "holm",
-  #                                     "hochberg" = "hochberg",
-  #                                     "hommel" = "hommel",
-  #                                     "bonferroni" = "bonferroni", 
-  #                                     "fdr" = "fdr",
-  #                                     "none" = "none"),
-  #                      selected = NULL)))
-  #     }
-  #   })
-  
-  
   
   
   #* For Supplementary information for affymetrix and illumina data platforms
@@ -1432,6 +1137,7 @@ shinyServer(function(input, output,session) {
   )
   
   
+  
   #* For supplementary information choosen by user for codelink data platform.
   #* This observer will update checkboxes 1 - 5 to TRUE whenever selectAll is clicked 
   observeEvent(
@@ -1448,6 +1154,7 @@ shinyServer(function(input, output,session) {
       )
     }
   )
+  
   
   
   
@@ -1468,16 +1175,6 @@ shinyServer(function(input, output,session) {
   )
   
   
-  
-  
-  # ## Ths reactive function accepts input files and stores in a variable.
-  # infiles <- eventReactive(input$Submit,{ 
-  #   if (is.null(input$files)){
-  #     return(NULL)
-  #     }
-  #   input$files
-  #   })
-  # 
   
   # This reactive function accepts input files and stores in a variable.
   # Only target files stored in case of differential expression
@@ -1560,8 +1257,8 @@ shinyServer(function(input, output,session) {
   # Display the content of annotation file
   output$Display_annotation_file <- renderUI({
     check_target_files = which(grepl(".txt", input$dataset))
-    # if(value$show_files =='uploaded'){
-      if ((length(input$dataset) > 1 && !input$checkbox) || (length(check_target_files) > 1 &&input$checkbox)){
+    # if(value$show_files =='uploaded'){  && !input$checkbox) || (length(check_target_files) > 1 && input$checkbox)
+      if ((length(input$dataset) > 1 & (input$radio == 1 | (input$radio == 2 & !input$checkbox) | input$radio == 3 ))){
         wellPanel(
           selectizeInput("showAnnoFile", "Select an annotation file to display ", 
                          c("please select a file " = '', gsub(pattern = "\\.txt$", "", input$dataset)))
@@ -1590,16 +1287,6 @@ shinyServer(function(input, output,session) {
   
   
   
-  # This renderDataTable displays list of files uploaded
-  # output$file <- renderDataTable({
-  #   if (is.null(input$files)){
-  #     return(NULL)
-  #     }
-  #   infiles()
-  #   })
-  # 
-  
-  
   
   ## This reactive function reads the file and process the uploaded data files
   list_files <- eventReactive(input$Submit,{
@@ -1608,9 +1295,8 @@ shinyServer(function(input, output,session) {
       new_file_names <- file.path(dirname(input$files[['datapath']]), basename(input$files[['name']]))
     else
       new_file_names <- input$files[['datapath']] # names of files that are in column 1
-    print(new_file_names[1])
+
     lines <- lapply(new_file_names, function(x) readLines(x, 20))
-    # lines <- readLines(path1, n = 10)
     IlluminaCheck <- read.table(text=sub('.*(#.*)', '\\1', lines[[1]]),
                                 check.names = FALSE, stringsAsFactors = FALSE, 
                                 comment.char = '#', header = TRUE,
@@ -1634,15 +1320,11 @@ shinyServer(function(input, output,session) {
     # Checking if files are raw codelink files
     # CheckforTXT <- grepl("*.TXT$", fileList) the code was changed
     # lines_for_codelink <- lapply(new_file_names, function(x) readLines(x, 20))
+    
     is_data_codelink_raw <- lapply(lines, function(x) grepl('CodeLink Expression Analysis', x))
     codelink_raw <- unlist(lapply(is_data_codelink_raw, function(x) any(x)))
-    # codelink_raw <- any(unlist(is_data_codelink_raw))
-    print(lines)
-    message("----------------------------------------------------")
-    # print(is_data_codelink_raw)
-    print(codelink_raw)
-    
-    
+   
+ 
     
     ##* Checking if files are both CEL and text
     CheckforCEL_TXT <- all(sapply(c('\\.CEL$', '\\.txt$'),
@@ -1659,13 +1341,11 @@ shinyServer(function(input, output,session) {
                                                     function(x) grepl("^GSM.*.txt", x, 
                                                                       ignore.case = TRUE)), function(x) any(x))))
     CheckforCodelinkDE <- all(any(codelink_raw) & length(target_files_indx) !=0L)
-    message("==============================================================")
-    print(CheckforCodelinkDE)
     
     ##* checking if the files belong to DE of illumina bead array
     # CheckforIlluminaDE <- grepl("*.txt$", fileList)
     CheckforIlluminaDE <- any(grepl(paste(c('aVG_Signal', 'bead', 'detection Pval'), collapse = '|'), lines, ignore.case = TRUE))
-    print(CheckforIlluminaDE)
+
     
     ##* To check if the checkbox is needed for differential expression
     if(any(CheckforCEL_TXT, CheckforCodelinkDE)){
@@ -1733,16 +1413,6 @@ shinyServer(function(input, output,session) {
           genAffyData[[length(genAffyData) + 1]] <- geneaffy
         }
         df <- affy_processed_data(genAffyData)
-        
-        #   # genAffyData = ReadAffy(filenames = input$files[['datapath']])
-        # if(grepl("hugene.1.0.st.v1",genAffyData@annotation) | grepl("hugene10stv1",genAffyData@annotation)){
-        #   genAffyData <- read.celfiles(input$files[['datapath']])
-        #   df <- processed_data(genAffyData)
-        # }
-        # else{
-        #   cat("Affymetrix Raw data selected\n")
-        #   df <- processed_data(genAffyData)
-        # }
         }
       else if(all(codelink_raw) && !input$checkbox)
       {
@@ -1840,14 +1510,14 @@ shinyServer(function(input, output,session) {
           stop("Annotation data base is missing, please choose and try again")
         }
         from <- input$files[['datapath']]
-        # cat("From datapath:", from, "\n")
+        
         newnames <- file.path(dirname(from), basename(input$files[['name']]))
-        # cat("New names:",newnames,"\n")
+       
         newone <- newnames[1]
         
         ##Removing the file name to set the path
         newpath <- sub("/[^/]*$", "", newone) 
-        # cat("New path:",newpath,"\n")
+        
         if(file.exists(from[1]))
           n <- file.rename(from, newnames)
         
@@ -1932,6 +1602,7 @@ shinyServer(function(input, output,session) {
           stop("Data uploaded is not of Codelink format,
                please check the data files and try again")
         }
+        
         # Illumina raw data processing
         cat("Illumina raw data processing:\n")
         illumina <- input$files[['datapath']]
@@ -2022,9 +1693,7 @@ shinyServer(function(input, output,session) {
   
   ## renderDataTable function to display content of one file ******************
   output$sourced <- renderDataTable({ 
-    # print(length(file_num()))
-    # print(length(list_files()))
-    if(is.null(file_num()) || (length(file_num())==0)){ #(file_num() > length(list_files()))
+    if(is.null(file_num()) || (length(file_num())==0)){ 
       return(NULL)
     }else if(length(file_num()) !=0){
       if(file_num() > length(list_files())){
@@ -2040,7 +1709,6 @@ shinyServer(function(input, output,session) {
     cat("Testing gpl file \n")
     annotation_file_list <- list()
     annotation <- input$select
-    # cat("print annotation files selected...\n", anno_file, "\n")
     lapply(input$dataset, function(i){
       if (grepl("[/\\\\]", i)) {
         stop("Invalid dataset")
@@ -2217,7 +1885,7 @@ shinyServer(function(input, output,session) {
   
   
   
-  ## This reactive function to summarize the data *************************** 
+  ## This reactive function to summarize the data 
   fulldata <- eventReactive(input$Submit,{ 
     withProgress(message = 'Generating Final Summary . . .',value = 0.01,{
       cat ("Data Summary done ...\n")
@@ -2239,15 +1907,15 @@ shinyServer(function(input, output,session) {
       stop("Less than two data files are selected,
            please provide two or more file and try again")
     }
-    logical <- grepl('PVALUE', colnames(final))
+    if_pvalue <- grepl('PVALUE', colnames(final))
     IlluminaCols <- ncol(final)-1
-    sm <- sum(logical, na.rm = TRUE)
-    logical3 <- grepl('INTENSITY', colnames(final))
-    logical4 <- grepl('CALL', colnames(final))
-    logical1 <- grepl('SNR', colnames(final))[3]
-    logical2 <- grepl('AlogFC|ClogFC|IlogFC', colnames(final))[2]
-    print(logical2)
-    if(any(logical) && (any(logical3) | sm == IlluminaCols))
+    sm <- sum(if_pvalue, na.rm = TRUE)
+    if_intensity <- grepl('INTENSITY', colnames(final))
+    if_call <- grepl('CALL', colnames(final))
+    if_snr <- grepl('SNR', colnames(final))[3]
+    if_foldchange <- grepl('AlogFC|ClogFC|IlogFC', colnames(final))[2]
+    print(if_foldchange)
+    if(any(if_pvalue) && (any(if_intensity) | sm == IlluminaCols))
     {
       cat("Final data generation reached\n")
       final <- data.frame(final)
@@ -2275,26 +1943,26 @@ shinyServer(function(input, output,session) {
       cat("Final data score assignment done ...\n")
       finaldata
     }
-    else if(!any(logical) && any(logical4))
+    else if(!any(if_pvalue) && any(if_call))
     {
       cat("Final data has CALL and INTENSITY present\n")
       final <- data.frame(final)
-      # print(head(final))
+
       finaldata <- final[grep('^(SYMBOL|CALL)', names(final))]
       finaldata[] = lapply(finaldata, as.character)
       finaldata[is.na(finaldata)] <- 0
-      # print(head(finaldata))
+
       finaldata$RS <- rowSums(ifelse(finaldata[, -1] == 'P', 2, 
                                          ifelse(finaldata[, -1] == 'A', -2, 0)))
       finaldata$RS <- as.numeric(finaldata$RS)
-      #print(head(finaldata,100))
+
       finaldata = finaldata[ order(finaldata$RS, decreasing = TRUE),]
       finaldata$FinalCall <- ifelse(finaldata$RS > 0, 'P',
                                     ifelse(finaldata$RS < 0, 'A', 'M'))
       cat("Affymetrix final data score assignment done ...\n")
       finaldata
     }
-    else if(logical1)
+    else if(if_snr)
     {
       cat("Final data has SYMBOL and SNR present\n")
       finaldata <- final[grep('^(SYMBOL|SNR)', names(final))]
@@ -2314,7 +1982,7 @@ shinyServer(function(input, output,session) {
       cat("Codelink final data score assignment done ... \n")
       finaldata
     }
-    else if(logical2 && input$checkbox)
+    else if(if_foldchange & input$checkbox)
     {
       cat("Performing Differential Expression\n")
       chk <- input$checkbox
@@ -2331,8 +1999,6 @@ shinyServer(function(input, output,session) {
                                    ifelse(finaldata[, 2] > 0, 2, -2))
       }else{
         finaldata <- fold[grep('^(SYMBOL|AlogFC|ClogFC|IlogFC|PVALUE)', names(fold))]
-        #finaldata <- fold[,names(fold)[col.names]]
-        #finaldata <- fold[, c(1, 2, 4, seq(5, ncol(fold), 3))]
         finaldata[is.na(finaldata)] <- 0
         finaldata$RS <- rowSums(ifelse(finaldata[, grep("logFC",names(finaldata))] == 0, 0,
                                            ifelse(finaldata[, grep("logFC",names(finaldata))] > 0, 2, -2)
@@ -2351,17 +2017,20 @@ shinyServer(function(input, output,session) {
     else if(input$radio == 3)
     {
       cat("Illumina data done\n")
+      
       # Extracting pvalue columns only
       finaldata <- final[, c(1, seq(3, ncol(final), 2))]
       finaldata[is.na(finaldata)] <- 0
       
+      
       # Assigning values and summing up.
-      finaldata$RS <- rowSums(ifelse(finaldata[, -1] == 0, 0, 
-                                         ifelse(finaldata[, -1] <= 0.05, 2, 
-                                                ifelse(finaldata[,- 1] >= 0.065, -2, 0)
-                                                )
+      finaldata$RS <- rowSums(ifelse(finaldata[, -1] == 0, 0,
+                                     ifelse(finaldata[, -1] <= 0.05, 2, 
+                                            ifelse(finaldata[,- 1] >= 0.065, -2, 0)
+                                            )
                                      )
                               )
+      
       # Sorting Cummulative score in decreasing order
       finaldata$RS <- as.numeric(finaldata$RS)
       finaldata = finaldata[order(finaldata$RS,decreasing = TRUE),] 
@@ -2393,14 +2062,18 @@ shinyServer(function(input, output,session) {
       return(NULL)
     }
     alldata <- fulldata()
-    logical <- grepl('INTENSITY', colnames(alldata))
-    logical1 <- grepl("CALL", colnames(alldata))
-    logical2 <- grepl("PVALUE", colnames(alldata))
-    if(any(logical1) && !any(logical2)) {
+    if_intensity <- grepl('INTENSITY', colnames(alldata))
+    if_call <- grepl("CALL", colnames(alldata))
+    if_pval <- grepl("PVALUE", colnames(alldata))
+    if(any(if_call) & !any(if_pval)) {
+      
+      # extract data having symbol or intensity or call
       finaldata <- alldata[grep('^(SYMBOL|INTENSITY|CALL)', names(alldata))]
     }
-    else if(any(logical)) {
+    else if(any(if_intensity)) {
       cat("U R almost done...\n")
+      
+      # extract data having symbol or intensity or snr or pval
       finaldata <- alldata[grep('^(SYMBOL|INTENSITY|SIGNALINTENSITY|SNR|PVALUE)',
                                 names(alldata))]
     }else{
@@ -2409,14 +2082,6 @@ shinyServer(function(input, output,session) {
   })
   
   
-  
-  # # This display the data with fold change
-  # output$fold <- renderDataTable({
-  #   if (is.null(summary())){
-  #     return(NULL)
-  #   }
-  #   summary()  
-  # })
   
   
   
@@ -2430,6 +2095,7 @@ shinyServer(function(input, output,session) {
   
   
   
+  
   # Dowload differential expression tutorial video
   output$DifferentialExpression <- downloadHandler(
     filename <- "Differential Expression.mp4",
@@ -2437,6 +2103,7 @@ shinyServer(function(input, output,session) {
       file.copy("www/Differential Expression Quantification.mp4", file)
     })
   outputOptions(output, "DifferentialExpression", suspendWhenHidden=FALSE)
+  
   
   
   
@@ -2450,6 +2117,7 @@ shinyServer(function(input, output,session) {
   
   
   
+  
   # This download handler is to download Codelink Sample Data
   output$CodelinkData <- downloadHandler( 
     filename <- "Codelink Data.zip",
@@ -2457,6 +2125,7 @@ shinyServer(function(input, output,session) {
       file.copy("www/Codelink Data.zip", file)
     })
   outputOptions(output, "CodelinkData", suspendWhenHidden=FALSE)
+  
   
   
   
@@ -2470,6 +2139,7 @@ shinyServer(function(input, output,session) {
   
   
   
+  
   # Full package (code and data)
   output$CodeandData<- downloadHandler( 
     filename <- "MAMGED_Code.zip",
@@ -2480,12 +2150,14 @@ shinyServer(function(input, output,session) {
   
   
   
+  
   # This download handler is to download  summary data
   output$downloadData1 <- downloadHandler(
     filename <- function() { paste('Summary', '.csv', sep = '')},
     content <- function(file) {
       write.csv(summary(), file)
     })
+  
   
   
   
