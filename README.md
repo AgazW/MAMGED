@@ -34,6 +34,7 @@ The current version of the MAMGED is able to handle microarray gene expression r
 * [HG-U219] Affymetrix Human Genome U219 Array (GPL 13667)
 * HG-U133_Plus_2 Affymetrix Gene Chip Human Genome HG-U133 Plus 2 Array Brainarray Version 12 (GPL 22321)
 * Affymetrix Human Genome U133 Plus 2.0 HGU133Plus2_Hs_REFSEQ_12.1.0] (GPL10881)
+* Hugene 1-0-st transcriptcluster.db ( that can be used to annotate data from [HuGene-1_0-st] Affymetrix Human Gene 1.0 ST Array [transcript (gene) version] (GPL6244))
 #### 2. Codelink
 * CodeLink UniSet Human 20K I Bioarray (GPL2891)
 * CodeLink Human Whole Genome Bioarray (GPL2895)
