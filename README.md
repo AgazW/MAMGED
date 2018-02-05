@@ -13,6 +13,7 @@ Three types of analysis can be performed for meta-analysis of absolute expressio
 The current version of the MAMGED is able to handle microarray gene expression raw/processed data from three different platforms:
 
 #### 1. Affymetrix 
+* MG_U74A- Affymetrix Murine Genome U74A Array(GPL32)
 * HC_G110 Affymetrix Human Cancer Array (GPL 74)
 * Mu11KsubA Affymetrix Murine 11K SubA Array (GPL75)
 * Hu6800 Affymetrix Human Full Length HuGeneFL Array (GPL80)
@@ -22,6 +23,7 @@ The current version of the MAMGED is able to handle microarray gene expression r
 * HG_U95D- Affymetrix Human Genome U95D Array (GPL94)
 * HG_U95E- Affymetrix Human Genome U95E Array(GPL95)
 * HG-U133B Affymetrix Human Genome U133B Array (GPL96)
+* HG-U133B- Affymetrix Human Genome U133B Array (GPL97)
 * Hu35KsubA Affymetrix Human 35K SubA Array (GPL98)
 * Hu35KsubB Affymetrix Human 35K SubB Array (GPL99)
 * Hu35KsubC Affymetrix Human 35K SubC Array (GPL100)
@@ -43,7 +45,7 @@ The current version of the MAMGED is able to handle microarray gene expression r
 * CodeLink Human Whole Genome Bioarray (GPL8547)
 
 #### 3. Illumina
-* Illumina HumanHT-12 V3.0 expression beadchip (GPL694
+* Illumina HumanHT-12 V3.0 expression beadchip (GPL6947)
 * Illumina human-6 v2.0 expression beadchip (GPL6102)
 * Illumina humanRef-8 v2.0 expression beadchip (GPL6104)
 * Illumina HumanRef-8 v3.0 expression beadchip (GPL6883)
