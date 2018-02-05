@@ -16,7 +16,7 @@ The current version of the MAMGED is able to handle microarray gene expression r
 * MG_U74A- Affymetrix Murine Genome U74A Array(GPL32)
 * HC_G110 Affymetrix Human Cancer Array (GPL 74)
 * Mu11KsubA Affymetrix Murine 11K SubA Array (GPL75)
-* Mu11KsubA- Affymetrix Murine 11K SubA Array (GPL75)
+* Mu11KsubB- Affymetrix Murine 11K SubB Array (GPL76)
 * Hu6800 Affymetrix Human Full Length HuGeneFL Array (GPL80)
 * HG_U95A Affymetrix Human Genome U95A Array (GPL 91)
 * HG_U95B- Affymetrix Human Genome U95B Array (GPL92)
