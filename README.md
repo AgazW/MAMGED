@@ -12,45 +12,115 @@ Three types of analysis can be performed for meta-analysis of absolute expressio
 
 The current version of the MAMGED is able to handle microarray gene expression raw/processed data from three different platforms:
 
-#### 1. Affymetrix 
-* MG_U74A- Affymetrix Murine Genome U74A Array(GPL32)
-* HC_G110 Affymetrix Human Cancer Array (GPL 74)
-* Mu11KsubA Affymetrix Murine 11K SubA Array (GPL75)
-* Mu11KsubB- Affymetrix Murine 11K SubB Array (GPL76)
-* Hu6800 Affymetrix Human Full Length HuGeneFL Array (GPL80)
-* HG_U95A Affymetrix Human Genome U95A Array (GPL 91)
-* HG_U95B- Affymetrix Human Genome U95B Array (GPL92)
-* HG_U95C- Affymetrix Human Genome U95C Array GPL94)
-* HG_U95E- Affymetrix Human Genome U95E Array(GPL95)
-* HG-U133A- Affymetrix Human Genome U133A Array (GPL96)
-* HG-U133B- Affymetrix Human Genome U133B Array (GPL97)
-* Hu35KsubA Affymetrix Human 35K SubA Array (GPL98)
-* Hu35KsubB Affymetrix Human 35K SubB Array (GPL99)
-* Hu35KsubC Affymetrix Human 35K SubC Array (GPL100)
-* Hu35KsubD Affymetrix Human 35K SubD Array (GPL101)
-* HG-Focus Affymetrix Human HG-Focus Target Array (GPL 201)
-* HG-U133_Plus_2 (GPL 570)
-* [HG-U133A_2] Affymetrix Human Genome U133A 2.0 Array (GPL571)
-* [HT_HG-U133A] Affymetrix HT Human Genome U133A Array (GPL3921)
-* HG_U95Av2 Affymetrix Human Genome U95 Version 2 Array (GPL 8300)
-* [HG-U219] Affymetrix Human Genome U219 Array (GPL 13667)
-* HG-U133_Plus_2 Affymetrix Gene Chip Human Genome HG-U133 Plus 2 Array Brainarray Version 12 (GPL 22321)
-* Affymetrix Human Genome U133 Plus 2.0 HGU133Plus2_Hs_REFSEQ_12.1.0] (GPL10881)
-* Hugene 1-0-st transcriptcluster.db ( that can be used to annotate data from [HuGene-1_0-st] Affymetrix Human Gene 1.0 ST Array [transcript (gene) version] (GPL6244))
-#### 2. Codelink
-* CodeLink UniSet Human 20K I Bioarray (GPL2891)
-* CodeLink Human Whole Genome Bioarray (GPL2895)
-* CodeLink UniSet Human 20K I Bioarray (GPL4044)
-* CodeLink Human Whole Genome Bioarray (GPL6248)
-* CodeLink Human Whole Genome Bioarray (GPL8547)
+1. Affymetrix
+   1. Human
+      - Affymetrix HT HG-U133+ PM Array Plate       
+      - Affymetrix HT Human Genome U133 Array Plate Set(hthgu133a)     
+      - Affymetrix HT Human Genome U133 Array Plate Set(hthgu133b)
+      - Affymetrix hugene10(hugene10stprobeset) 
+      - Affymetrix hugene10(hugene10sttranscriptcluster)       
+      - Affymetrix hugene11(hugene11stprobeset)       
+      - Affymetrix hugene11(hugene11sttranscriptcluster)       
+      - Affymetrix hugene21(hugene21stprobeset)   
+      - Affymetrix hugene21(hugene21sttranscriptcluster)    
+      - Affymetrix HuGeneFL Genome Array(hu6800)       
+      - Affymetrix Human Cancer G110 Array(hcg110)      
+      - Affymetrix Human Genome 219 Plate(hgu219)     
+      - Affymetrix Human Genome Focus Array(hgfocus)      
+      - Affymetrix Human Genome HU35K Set(hu35ksuba)      
+      - Affymetrix Human Genome HU35K Set(hu35ksubb)      
+      - Affymetrix Human Genome HU35K Set(hu35ksubc)      
+      - Affymetrix Human Genome HU35K Set(hu35ksubd)       
+      - Affymetrix Human Genome U133 Plus 2.0 Array(hgu133plus2)     
+      - Affymetrix Human Genome U133 Set(hgu133a)     
+      - Affymetrix Human Genome U133 Set(hgu133b)      
+      - Affymetrix Human Genome U133A 2.0 Array(hgu133a2)      
+      - Affymetrix Human Genome U95 Set(hgu95a)      
+      - Affymetrix Human Genome U95 Set(hgu95av2)      
+      - Affymetrix Human Genome U95 Set(hgu95b)       
+      - Affymetrix Human Genome U95 Set(hgu95c)      
+      - Affymetrix Human Genome U95 Set(hgu95d)       
+      - Affymetrix Human Genome U95 Set(hgu95e)     
+      - [PrimeView] Affymetrix Human Gene Expression Array
 
-#### 3. Illumina
-* Illumina HumanHT-12 V3.0 expression beadchip (GPL6947)
-* Illumina human-6 v2.0 expression beadchip (GPL6102)
-* Illumina humanRef-8 v2.0 expression beadchip (GPL6104)
-* Illumina HumanRef-8 v3.0 expression beadchip (GPL6883)
-* Illumina HumanWG-6 v3.0 expression beadchip (GPL6884)
-* Illumina HumanHT-12 V4.0 expression beadchip (GPL10558)
+   2. Mouse   
+      - [HT_MG-430_PM] Affymetrix HT MG-430 PM Array Plate 
+      - Affymetrix Mouse Expression Set 430(moe430a)                       
+      - Affymetrix Mouse Expression Set 430(moe430b)
+      - Affymetrix Mouse Genome 430A 2.0 Array(mouse430a2)
+      - Affymetrix Mouse(mgug4121a)
+      - Affymetrix Murine 11K Set(mu11ksuba)
+      - Affymetrix Murine 11K Set(mu11ksubb)
+      - Affymetrix Murine Genome U74v2(mgu74a)
+      - Affymetrix Murine Genome U74v2(mgu74av2) 
+      - Affymetrix Murine Genome U74v2(mgu74b)
+      - Affymetrix Murine Genome U74v2(mgu74bv2)
+      - Affymetrix Murine Genome U74v2(mgu74c)
+      - Affymetrix Murine Genome U74v2(mgu74cv2)
+
+      
+   3. Rat   
+      - Affymetrix Rat Expression Set 230(rae230a)
+      - Affymetrix Rat Expression Set 230(rae230b)            
+      - Affymetrix Rat Genome 230 2.0 Array(rat2302)
+      - Affymetrix Rat Genome U34 Set(rgu34a)
+      - Affymetrix Rat Genome U34 Set(rgu34b)
+      - Affymetrix Rat Genome U34 Set(rgu34c)                      
+
+   4. Arabidopsis
+      - Affymetrix Arabidopsis ATH1 Genome Array(ath1121501) 
+   5. Drosophila
+      - Affymetrix Drosophila Genome 2.0 Array(drosophila2)
+      - Affymetrix Drosophila Genome Array(drosgenome1)
+   6. Yeast
+      - Affymetrix Yeast Genome 2.0 Array(yeast2)
+      - Affymetrix Yeast Genome S98 Array(ygs98)
+   7. Zebrafish
+      - Affymetrix zebrafish(zebrafish) 
+   8. Celegans
+      - Affymetrix celegans(celegans)    
+      
+2. Agilent
+   1. Human
+      - Agilent-012391 Whole Human Genome Oligo Microarray G4112A
+      - Agilent-027478 Homo sapiens 420K HOTSPOT3.1_SG
+      - Agilent-028004 SurePrint G3 Human GE 8x60K Microarray
+      - Agilent-028005 SurePrint G3 Mouse GE 8x60K Microarray
+      - Agilent-039494 SurePrint G3 Human GE v2 8x60K Microarray 039381
+      - Agilent Human Genome,  Whole(hgug4112a)
+      - Chips that use Agilent design number 026652(HsAgilentDesign026652)
+   2. Mouse
+      - Agilent Mouse Genome,  Whole(mgug4122a)
+      - Chips that use Agilent design number 026655(MmAgilentDesign026655) 
+   3. Rat
+      - Chips that use Agilent design number 028282(RnAgilentDesign028282) 
+   4. Celegans
+      - Agilent-020186 C. elegans (V2) Gene Expression Microarray          
+   5. Arabidopsis
+      - Agilent-021169 Arabidopsis 4 Oligo Microarray (V4)
+   6. E-coli
+      - Agilent-029412 E. coli K-12 MG1655
+      
+3. Illumina
+   1. Human
+      - HumanHT12v3(illuminaHumanv3)                                       
+      - HumanHT12v4(illuminaHumanv4)
+      - HumanWGDASLv4(illuminaHumanWGDASLv4)
+      - HumanHT12WGDASLv3
+      - HumanWG6v2(illuminaHumanv2) 
+   2. Mouse
+      - MouseWG6v1p1(illuminaMousev1p1)
+      - MouseWG6v2(illuminaMousev2)                                       
+
+
+4. Codelink
+   1. Human
+      - UniSet Human 20k I Bioarray(h20kcod)
+      - UniSet Human I Bioarray (~10 000 human genes)(h10kcod)             
+      - Human Whole Genome Bioarray (~55 000 human genes)(hwgcod)          
+
+
+
 
 
 Support for many more platforms from 1, 2 and 3, and Agilent Platform will be available soon.
