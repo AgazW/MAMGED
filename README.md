@@ -143,9 +143,6 @@ NOTE: Replace `packagename` with the actual package name.
 * dplyr
 * codelink
 * lumi
-* h20kcod.db
-* h10kcod.db
-* hwgcod.db
 * limma
 * tibble
 * dtplyr
