@@ -13,14 +13,24 @@ Three types of analysis can be performed for meta-analysis of absolute expressio
 The current version of the MAMGED is able to handle microarray gene expression raw/processed data from three different platforms:
 
 1. Affymetrix
-   1. Human
-      - Affymetrix HT HG-U133+ PM Array Plate       
+   1. Human            
       - Affymetrix HT Human Genome U133 Array Plate Set(hthgu133a)     
       - Affymetrix HT Human Genome U133 Array Plate Set(hthgu133b)
+      - Affymetrix Human Genome U133 Plus 2.0 Array(hgu133plus2)     
+      - Affymetrix Human Genome U133 Set(hgu133a)     
+      - Affymetrix Human Genome U133 Set(hgu133b)      
+      - Affymetrix Human Genome U133A 2.0 Array(hgu133a2)      
+      - Affymetrix Human Genome U95 Set(hgu95a)      
+      - Affymetrix Human Genome U95 Set(hgu95av2)      
+      - Affymetrix Human Genome U95 Set(hgu95b)       
+      - Affymetrix Human Genome U95 Set(hgu95c)      
+      - Affymetrix Human Genome U95 Set(hgu95d)       
+      - Affymetrix Human Genome U95 Set(hgu95e)  
       - Affymetrix hugene10(hugene10stprobeset) 
       - Affymetrix hugene10(hugene10sttranscriptcluster)       
       - Affymetrix hugene11(hugene11stprobeset)       
-      - Affymetrix hugene11(hugene11sttranscriptcluster)       
+      - Affymetrix hugene11(hugene11sttranscriptcluster)
+      - Affymetrix hugene20(hugene20stprobeset)
       - Affymetrix hugene21(hugene21stprobeset)   
       - Affymetrix hugene21(hugene21sttranscriptcluster)    
       - Affymetrix HuGeneFL Genome Array(hu6800)       
@@ -31,20 +41,10 @@ The current version of the MAMGED is able to handle microarray gene expression r
       - Affymetrix Human Genome HU35K Set(hu35ksubb)      
       - Affymetrix Human Genome HU35K Set(hu35ksubc)      
       - Affymetrix Human Genome HU35K Set(hu35ksubd)       
-      - Affymetrix Human Genome U133 Plus 2.0 Array(hgu133plus2)     
-      - Affymetrix Human Genome U133 Set(hgu133a)     
-      - Affymetrix Human Genome U133 Set(hgu133b)      
-      - Affymetrix Human Genome U133A 2.0 Array(hgu133a2)      
-      - Affymetrix Human Genome U95 Set(hgu95a)      
-      - Affymetrix Human Genome U95 Set(hgu95av2)      
-      - Affymetrix Human Genome U95 Set(hgu95b)       
-      - Affymetrix Human Genome U95 Set(hgu95c)      
-      - Affymetrix Human Genome U95 Set(hgu95d)       
-      - Affymetrix Human Genome U95 Set(hgu95e)     
-      - [PrimeView] Affymetrix Human Gene Expression Array
-
-   2. Mouse   
-      - [HT_MG-430_PM] Affymetrix HT MG-430 PM Array Plate 
+      - [PrimeView] Affymetrix Human Gene Expression Array       
+      - Affymetrix HT HG-U133+ PM Array Plate 
+   2. Mouse    
+      - [HT_MG-430_PM] Affymetrix HT MG-430 PM Array Plate
       - Affymetrix Mouse Expression Set 430(moe430a)                       
       - Affymetrix Mouse Expression Set 430(moe430b)
       - Affymetrix Mouse Genome 430A 2.0 Array(mouse430a2)
@@ -114,16 +114,14 @@ The current version of the MAMGED is able to handle microarray gene expression r
 
 
 4. Codelink
-   1. Human
+   1. Human      
+      - UniSet Human I Bioarray (~10 000 human genes)(h10kcod)
+      - Human Inflammation 16 Bioarray(hi16cod
       - UniSet Human 20k I Bioarray(h20kcod)
-      - UniSet Human I Bioarray (~10 000 human genes)(h10kcod)             
-      - Human Whole Genome Bioarray (~55 000 human genes)(hwgcod)          
+      - Human Whole Genome Bioarray (~55 000 human genes)(hwgcod)
 
 
-
-
-
-Support for many more platforms from 1, 2 and 3, and Agilent Platform will be available soon.
+Support for many more platforms from 1, 2, 3 and 4 will be available soon.
 
 ## STRUCTURE OF MAMGED
 The online version of the MAMGED consists of a web interface to a set of modules pipelined for analyses and a database holding GPL files. This allows the user to submit the data and set all the necessary parameters. Once the job is submitted, the user is provided with a job id for future reference. The submitted job is put in the queue and is processed on first come first serve basis. After the submitted job is analysed, the user can download the data by providing the job id (no online visualization of the loaded data and results is provided).  Due to large space requirements, the submitted job and the results are cleared after two weeks.  There is also a standalone version of the tool for remote work, which is downloadable from the [MAMGED](http://mamged.ibab.ac.in/v01/) under stand "Stand-Alone Version". In this version, the analysis process starts immediately after submitting the job (without putting the job in the queue) and the user is able to view the data and final results before downloading it for further use.
